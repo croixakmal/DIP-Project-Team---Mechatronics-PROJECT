@@ -42,3 +42,33 @@ correct = 0
 for (j, s) in enumerate(np.arange(0, len(ques), 6)):
     Cnts = contours.sort_contours(ques[s:s + 5])[0]
     CHOSEN = None
+     for (q, b) in enumerate(Cnts):
+        mask = np.zeros(thresh.shape, dtype="uint8")
+        cv2.drawContours(mask, [b], -1, 255, -1)
+        mask = cv2.bitwise_and(thresh, thresh, mask=mask)
+        total = cv2.countNonZero(mask)       
+        if chosen is None or total > chosen[0]:
+            chosen = (total, q)
+            
+            
+    color = (255, 0, 255)
+    
+    k = ANSWER[j]
+    
+    if k == chosen[1]:
+        color = (0, 255, 0)
+        correct += 1
+        
+        
+    cv2.drawContours(image, [Cnts[k]], -1, color, 3) #TO SHOW BUBBLED ANSWER AND CORRECT IN BLACK CIRCLE
+
+MARKS =  (correct / 5.0) * 100
+
+#TO PUT MARKS ON IMAGE RESULT
+
+cv2.putText(image, ",MARKS={:.2f}%".format(MARKS), (160, 12),cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255), 1)
+
+#SHOW RESULTS 
+
+cv2.imshow("Original", image)
+cv2.waitKey(0)
